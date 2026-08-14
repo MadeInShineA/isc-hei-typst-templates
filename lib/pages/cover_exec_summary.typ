@@ -13,6 +13,7 @@
   picture: none, // [Optional], put none if not used
   permanent-email: "", // [Optional], put none if not used
   video-url: none, // Link to the video, if any
+  project-website-url: none, // Link to the project website, if any
   supervisors: "",
   expert: "Dr Grace Hopper", // Optional, use none if not needed
   academic-year: "2025-2026", // Optional, use none if not needed
@@ -198,20 +199,15 @@
     ) 
   )
   
-  if(video-url != none) {  
-    // QR code generation
+  if(video-url != none or project-website-url != none) {
     import "@preview/tiaoma:0.3.0"
 
-    place(
-      top+right,
-      float: false,        
-      dx: 0mm,
-      dy: 25mm,
-      clearance: 0em,
-      // Put it in a box to be resized
-      stack(
-        spacing: 0.5em,                
-        tiaoma.barcode(video-url, "QRCode", options: (            
+    let qr-stack = stack(
+      spacing: 1.2em,
+      ..if video-url != none {
+        (stack(
+          spacing: 0.5em,
+          tiaoma.barcode(video-url, "QRCode", options: (
             scale: 1.0,
             fg-color: black,
             bg-color: white,
@@ -219,9 +215,34 @@
               barcode-dotty-mode: false
             ),
             dot-size: 1.0,
-        )),        
-        align(center)[#text("Video", size: 8pt)],
-      )
+          )),
+          align(center)[#text("Video", size: 8pt)],
+        ),)
+      } else { () },
+      ..if project-website-url != none {
+        (stack(
+          spacing: 0.5em,
+          tiaoma.barcode(project-website-url, "QRCode", options: (
+            scale: 1.0,
+            fg-color: black,
+            bg-color: white,
+            output-options: (
+              barcode-dotty-mode: false
+            ),
+            dot-size: 1.0,
+          )),
+          align(center)[#text(if language == "fr" { "Site du projet" } else { "Project website" }, size: 8pt)],
+        ),)
+      } else { () },
+    )
+
+    place(
+      top+right,
+      float: false,
+      dx: 0mm,
+      dy: 25mm,
+      clearance: 0em,
+      qr-stack,
     )
   }
 

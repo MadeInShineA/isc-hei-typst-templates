@@ -52,6 +52,7 @@
   student-picture: none,
   permanent-email: "stormy.peters@example.com",
   video-url: none,
+  project-website-url: none,
   bind: none,
   footer: none,
   // Your picture and email will be used in the printed brochure.
@@ -425,6 +426,7 @@
     student-picture: student-picture,
     permanent-email: permanent-email,
     video-url: video-url,
+    project-website-url: project-website-url,
     bind: bind,
     footer: footer,
   )
