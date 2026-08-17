@@ -108,6 +108,7 @@ DataFlowX delivers significant benefits by enabling organizations to harness rea
   student-picture: image("figs/random_image.png"), // [Optional], put none if not used
   permanent-email: "stormy.peters@example.com", // [Optional], put none if not used. Prefer a long term viable address!
   video-url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", // A link to the video of you project, or none
+  project-website-url: none, // A link to the project website, or none
 
   // DISCLAIMER: Your picture and email address will be used in the printed
   // ISC bachelor thesis brochure. Unless you opt out below, they will also

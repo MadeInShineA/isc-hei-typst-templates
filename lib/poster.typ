@@ -72,6 +72,8 @@
   hei-logo-height: 3.6cm, // height applied when hei-logo: auto; ignored for custom content
   num-columns: 2,
   distribute-columns: true,
+  project-website-url: none,
+  hide-completeness-warning: false,
   body,
 ) = {
   import "@preview/placard:0.1.0": placard as _placard
@@ -91,7 +93,7 @@
   // Validate the major (same known set as project()); empty is allowed.
   validate-major(major)
 
-  // ISC TB aggregator — not user-facing; update here when the URL moves.  
+  // ISC TB aggregator — not user-facing; update here when the URL moves.
   let _isc-tbs-website = "https://tbs.isc-vs.ch/"
 
   // ── Logo resolution ───────────────────────────────────────────────────────
@@ -243,12 +245,24 @@
     )
   )
 
+  let _project-discover-pill = rotate(-90deg, reflow: true,
+    par(leading: 2pt,
+      text(font: "Source Sans Pro", size: 10pt, weight: "semibold",
+           fill: inc.hei-purple, i18n(language, "poster-discover-project").split("\n").join(linebreak()))
+    )
+  )
+
+  let _info-cols = (auto, auto, auto) + (if project-website-url != none { (auto, auto) } else { () })
+
   let _info-block = grid(
-    columns: (auto, auto, auto),
+    columns: _info-cols,
     column-gutter: 5mm,
     align: horizon,
     _tous-les-travaux-pill,
     _make-qr(_isc-tbs-website),
+    ..(if project-website-url != none {
+      (_project-discover-pill, _make-qr(project-website-url),)
+    } else { () }),
     stack(dir: ttb, spacing: 10pt,
       _info-value(programme, first: true),
       ..(if major != none {
@@ -271,8 +285,12 @@
     context {
       let issues = overflow.title-overflow-issues(title, subtitle: subtitle, lang: language)
       if issues.len() > 0 {
-        place(top + center, dy: 7cm,
-          overflow.overflow-warning-box(issues, font: "Source Sans Pro", width: 78%, scale: 3, lang: language))
+        if not hide-completeness-warning {
+          place(top + center, dy: 7cm,
+            overflow.overflow-warning-box(issues, font: "Source Sans Pro", width: 78%, scale: 3, lang: language))
+        } else {
+          place(bottom + left, dx: -5mm, dy: -0.4mm, circle(radius: 2.5pt, fill: rgb("#c1121f"), stroke: none))
+        }
       }
     }
   })

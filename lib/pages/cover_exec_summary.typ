@@ -13,6 +13,7 @@
   picture: none, // [Optional], put none if not used
   permanent-email: "", // [Optional], put none if not used
   video-url: none, // Link to the video, if any
+  project-website-url: none, // Link to the project website, if any
   supervisors: "",
   expert: "Dr Grace Hopper", // Optional, use none if not needed
   academic-year: "2025-2026", // Optional, use none if not needed
@@ -22,7 +23,8 @@
   major: "Data engineering", // see lib/settings.typ `majors` for the valid set
   bind: none, // Bind the left side of the page
   footer: none,
-  font: none,  
+  font: none,
+  hide-completeness-warning: false, // Set true to suppress the title overflow warning
 ) = {
 
   let i18n = isc.i18n.with(extra-i18n: none, language)
@@ -76,12 +78,18 @@
   // lib/overflow.typ) so it matches every other document. Rendered as a banner
   // above the title; only appears on overflow, so the sample is unaffected. Plain
   // context (not layout) keeps the no-overflow case zero-footprint.
+  // When hide-completeness-warning is true, the warning is suppressed but a
+  // discreet red dot is placed on this page to record the override.
   context {
     let issues = overflow.title-overflow-issues(title, subtitle: subtitle)
     if overflow.summary-too-long(summary) { issues.push(i18n("summary-too-long")) }
     if issues.len() > 0 {
-      overflow.overflow-warning-box(issues, font: font, width: 210mm - 1.5cm - 1cm)
-      v(0.6em)
+      if not hide-completeness-warning {
+        overflow.overflow-warning-box(issues, font: font, width: 210mm - 1.5cm - 1cm)
+        v(0.6em)
+      } else {
+        place(bottom + left, dx: -5mm, dy: -0.4mm, circle(radius: 2.5pt, fill: rgb("#c1121f"), stroke: none))
+      }
     }
   }
 
@@ -198,20 +206,15 @@
     ) 
   )
   
-  if(video-url != none) {  
-    // QR code generation
+  if(video-url != none or project-website-url != none) {
     import "@preview/tiaoma:0.3.0"
 
-    place(
-      top+right,
-      float: false,        
-      dx: 0mm,
-      dy: 25mm,
-      clearance: 0em,
-      // Put it in a box to be resized
-      stack(
-        spacing: 0.5em,                
-        tiaoma.barcode(video-url, "QRCode", options: (            
+    let qr-stack = stack(
+      spacing: 1.2em,
+      ..if video-url != none {
+        (stack(
+          spacing: 0.5em,
+          tiaoma.barcode(video-url, "QRCode", options: (
             scale: 1.0,
             fg-color: black,
             bg-color: white,
@@ -219,9 +222,34 @@
               barcode-dotty-mode: false
             ),
             dot-size: 1.0,
-        )),        
-        align(center)[#text("Video", size: 8pt)],
-      )
+          )),
+          align(center)[#text("Video", size: 8pt)],
+        ),)
+      } else { () },
+      ..if project-website-url != none {
+        (stack(
+          spacing: 0.5em,
+          tiaoma.barcode(project-website-url, "QRCode", options: (
+            scale: 1.0,
+            fg-color: black,
+            bg-color: white,
+            output-options: (
+              barcode-dotty-mode: false
+            ),
+            dot-size: 1.0,
+          )),
+          align(center)[#text(if language == "fr" { "Site du projet" } else { "Project website" }, size: 8pt)],
+        ),)
+      } else { () },
+    )
+
+    place(
+      top+right,
+      float: false,
+      dx: 0mm,
+      dy: 25mm,
+      clearance: 0em,
+      qr-stack,
     )
   }
 
