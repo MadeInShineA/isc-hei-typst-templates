@@ -73,6 +73,7 @@
   num-columns: 2,
   distribute-columns: true,
   project-website-url: none,
+  hide-completeness-warning: false,
   body,
 ) = {
   import "@preview/placard:0.1.0": placard as _placard
@@ -89,7 +90,7 @@
   // (project()-based templates already pass date:, so only the poster needed this).
   set document(date: none)
 
-  // ISC TB aggregator — not user-facing; update here when the URL moves.  
+  // ISC TB aggregator — not user-facing; update here when the URL moves.
   let _isc-tbs-website = "https://tbs.isc-vs.ch/"
 
   // ── Logo resolution ───────────────────────────────────────────────────────
@@ -281,8 +282,12 @@
     context {
       let issues = overflow.title-overflow-issues(title, subtitle: subtitle, lang: language)
       if issues.len() > 0 {
-        place(top + center, dy: 7cm,
-          overflow.overflow-warning-box(issues, font: "Source Sans Pro", width: 78%, scale: 3, lang: language))
+        if not hide-completeness-warning {
+          place(top + center, dy: 7cm,
+            overflow.overflow-warning-box(issues, font: "Source Sans Pro", width: 78%, scale: 3, lang: language))
+        } else {
+          place(bottom + left, dx: -5mm, dy: -0.4mm, circle(radius: 2.5pt, fill: rgb("#c1121f"), stroke: none))
+        }
       }
     }
   })
