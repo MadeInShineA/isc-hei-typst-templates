@@ -55,6 +55,7 @@
   student-picture: none,
   permanent-email: none,
   video-url: none,
+  project-website-url: none,
   bind: none,
   footer: none,
 ) = {
@@ -153,6 +154,7 @@
       picture: student-picture,
       permanent-email: permanent-email,
       video-url: video-url,
+      project-website-url: project-website-url,
       academic-year: academic-year,
       supervisors: supervisors,
       expert: thesis-expert,
