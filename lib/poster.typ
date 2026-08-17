@@ -72,6 +72,7 @@
   hei-logo-height: 3.6cm, // height applied when hei-logo: auto; ignored for custom content
   num-columns: 2,
   distribute-columns: true,
+  project-website-url: none,
   body,
 ) = {
   import "@preview/placard:0.1.0": placard as _placard
@@ -240,12 +241,24 @@
     )
   )
 
+  let _project-discover-pill = rotate(-90deg, reflow: true,
+    par(leading: 2pt,
+      text(font: "Source Sans Pro", size: 10pt, weight: "semibold",
+           fill: inc.hei-purple, i18n(language, "poster-discover-project").split("\n").join(linebreak()))
+    )
+  )
+
+  let _info-cols = (auto, auto, auto) + (if project-website-url != none { (auto, auto) } else { () })
+
   let _info-block = grid(
-    columns: (auto, auto, auto),
+    columns: _info-cols,
     column-gutter: 5mm,
     align: horizon,
     _tous-les-travaux-pill,
     _make-qr(_isc-tbs-website),
+    ..(if project-website-url != none {
+      (_project-discover-pill, _make-qr(project-website-url),)
+    } else { () }),
     stack(dir: ttb, spacing: 10pt,
       _info-value(programme, first: true),
       ..(if major != none {
